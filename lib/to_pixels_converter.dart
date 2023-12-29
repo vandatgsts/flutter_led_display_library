@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutterl_led_display/text_to_picture_converter.dart';
+import 'package:flutter_led_display/text_to_picture_converter.dart';
 
 import 'package:image/image.dart' as imagePackage;
 
@@ -44,8 +44,7 @@ class ToPixelsConverter {
   }
 
   List<List<Color>> _bytesToPixelArray(ByteData imageBytes) {
-    List<int> values = imageBytes.buffer.asUint8List();
-    imagePackage.Image decodedImage = imagePackage.decodeImage(values);
+    imagePackage.Image? decodedImage = imagePackage.decodeImage(imageBytes.buffer.asUint8List());
     List<List<Color>> pixelArray = new List.generate(
       canvasSize.toInt(), (_) => new List(canvasSize.toInt())
     );
