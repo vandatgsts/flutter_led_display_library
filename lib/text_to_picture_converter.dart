@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 
 class TextToPictureConverter {
   static ui.Picture convert({
-    @required String text,
-    @required double canvasSize,
-    @required bool border,
+    required String text,
+    required double canvasSize,
+    required bool border,
   }) {
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(
