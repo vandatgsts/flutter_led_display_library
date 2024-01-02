@@ -5,14 +5,12 @@ import 'package:flutter_led_display/display_simulator.dart';
 class DisplayPainter extends CustomPainter {
   DisplayPainter({
     required this.pixels,
-    required this.canvasSize,
     required this.backgroundColor,
     this.gradient,
     required this.type,
   });
 
   List<List<Color>> pixels;
-  double canvasSize;
   Color backgroundColor;
   List<Color>? gradient;
   ShapeType type;
