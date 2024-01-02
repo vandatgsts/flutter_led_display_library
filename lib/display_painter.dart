@@ -19,8 +19,6 @@ class DisplayPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height),
-        Paint()..color = backgroundColor);
 
     // Paint rectPaint = Paint()..color = backgroundColor;
     Paint shapePaint = Paint();
