@@ -6,17 +6,17 @@ class TextToPictureConverter {
     required String text,
     required double canvasSize,
     required bool border,
+    required Color color,
   }) {
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(
       recorder,
       Rect.fromPoints(
-        Offset(0.0, 0.0),
+        const Offset(0.0, 0.0),
         Offset(canvasSize, canvasSize),
       ),
     );
 
-    final Color color = Colors.white;
 
     if (border) {
       final stroke = Paint()

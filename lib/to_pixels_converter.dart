@@ -8,17 +8,21 @@ class ToPixelsConverter {
   ToPixelsConverter.fromString({
     required this.string,
     required this.canvasSize,
+    required this.textColor,
     this.border = false,
   }) : canvas = null;
 
   ToPixelsConverter.fromCanvas({
     required this.canvas,
     required this.canvasSize,
-  }) : string = null, border = false;
+  })  : string = null,
+        border = false,
+        textColor = Colors.black;
 
   String? string; // Marked as nullable
   Canvas? canvas; // Marked as nullable
   bool border;
+  Color textColor;
   final double canvasSize;
 
   Future<ToPixelsConversionResult> convert() async {
@@ -29,7 +33,11 @@ class ToPixelsConverter {
     // Ensure the text to picture converter is appropriately handling null values
     final ui.Picture picture = (string != null)
         ? TextToPictureConverter.convert(
-        text: string!, canvasSize: canvasSize, border: border)
+            text: string!,
+            canvasSize: canvasSize,
+            border: border,
+            color: textColor,
+          )
         : throw Exception('Canvas conversion not supported yet');
 
     final ByteData imageBytes = await _pictureToBytes(picture);
@@ -42,28 +50,28 @@ class ToPixelsConverter {
   }
 
   Future<ByteData> _pictureToBytes(ui.Picture picture) async {
-    final ui.Image img = await picture.toImage(
-        canvasSize.toInt(), canvasSize.toInt()
-    );
+    final ui.Image img =
+        await picture.toImage(canvasSize.toInt(), canvasSize.toInt());
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
     if (data == null) throw Exception("Failed to convert image to bytes");
     return data;
   }
 
   List<List<Color>> _bytesToPixelArray(ByteData imageBytes) {
-    imagePackage.Image? decodedImage = imagePackage.decodeImage(imageBytes.buffer.asUint8List());
+    imagePackage.Image? decodedImage =
+        imagePackage.decodeImage(imageBytes.buffer.asUint8List());
     if (decodedImage == null) {
       throw Exception('Failed to decode image');
     }
 
     List<List<Color>> pixelArray = List.generate(
       canvasSize.toInt(),
-          (_) => List.filled(canvasSize.toInt(), Colors.transparent),
+      (_) => List.filled(canvasSize.toInt(), Colors.transparent),
     );
 
     for (int i = 0; i < canvasSize.toInt(); i++) {
       for (int j = 0; j < canvasSize.toInt(); j++) {
-        int pixel = decodedImage.getPixelSafe(i, j) as int;
+        int pixel = decodedImage.getPixelSafe(i, j);
         int hex = _convertColorSpace(pixel);
         pixelArray[i][j] = Color(hex);
       }

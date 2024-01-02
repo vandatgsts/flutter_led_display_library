@@ -5,27 +5,42 @@ import 'package:flutter/widgets.dart';
 import 'display_painter.dart';
 import 'to_pixels_converter.dart';
 
-const canvasSize = 100.0;
+const canvasSize = 200.0;
+
+enum ShapeType {
+  rectangle,
+  circle,
+  star,
+  heart,
+}
 
 class DisplaySimulator extends StatefulWidget {
-  DisplaySimulator({
+  const DisplaySimulator({
+    super.key,
     required this.text,
     this.border = false,
-    this.debug = false
+    this.debug = false,
+    required this.backgroundColor,
+    required this.textColor,
+    this.scale = 1,
+    this.shapeType = ShapeType.rectangle,
   });
 
   final String text;
   final bool border;
   final bool debug;
-
+  final Color backgroundColor;
+  final Color textColor;
+  final double scale;
+  final ShapeType shapeType;
 
   @override
   _DisplaySimulatorState createState() => _DisplaySimulatorState();
 }
 
 class _DisplaySimulatorState extends State<DisplaySimulator> {
-  late ByteData imageBytes;
-  late List<List<Color>> pixels;
+  ByteData? imageBytes;
+  List<List<Color>>? pixels;
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +48,13 @@ class _DisplaySimulatorState extends State<DisplaySimulator> {
 
     return Column(
       children: <Widget>[
-        SizedBox(height: 96,),
+        const SizedBox(
+          height: 96,
+        ),
         _getDebugPreview(),
-        SizedBox(height: 48,),
+        const SizedBox(
+          height: 48,
+        ),
         _getDisplay(),
         //_getDisplayWithWidgets()
       ],
@@ -48,11 +67,11 @@ class _DisplaySimulatorState extends State<DisplaySimulator> {
     }
 
     return Image.memory(
-      Uint8List.view(imageBytes.buffer),
+      Uint8List.view(imageBytes!.buffer),
       gaplessPlayback: true,
       filterQuality: FilterQuality.none,
-      width: canvasSize,
-      height: canvasSize,
+      width: canvasSize / widget.scale,
+      height: canvasSize / widget.scale,
     );
   }
 
@@ -62,20 +81,27 @@ class _DisplaySimulatorState extends State<DisplaySimulator> {
     }
 
     return CustomPaint(
-      size: Size.square(MediaQuery.of(context).size.width),
-      painter: DisplayPainter(pixels: pixels, canvasSize: canvasSize)
-    );
+        size: Size.square(MediaQuery.of(context).size.width),
+        painter: DisplayPainter(
+          pixels: pixels!,
+          canvasSize: canvasSize / widget.scale,
+          backgroundColor: widget.backgroundColor,
+          type: widget.shapeType,
+          gradient: [Colors.white,Colors.red]
+        ));
   }
 
   void _obtainPixelsFromText(String text) async {
     ToPixelsConversionResult result = await ToPixelsConverter.fromString(
-      string: text, border: widget.border, canvasSize: canvasSize
+      string: text,
+      border: widget.border,
+      canvasSize: canvasSize / widget.scale,
+      textColor: widget.textColor,
     ).convert();
 
     setState(() {
-      this.imageBytes = result.imageBytes;
+      imageBytes = result.imageBytes;
       pixels = result.pixels;
     });
   }
 }
-
