@@ -37,10 +37,14 @@ class _HomeState extends State<Home> {
             child: Column(
               children: [
                 DisplaySimulator(
-                  text: widget.text,
+                  text: "Nguyen Van Dat Vui Vui Thoi",
                   border: false,
                   debug: false,
                   textColor: widget.textColor,
+                  textStyle: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 25,
+                  ),
                   backgroundColor: widget.backgroundColor,
                   shapeType: widget.shapeType,
                 ),
@@ -49,30 +53,5 @@ class _HomeState extends State<Home> {
             )));
   }
 
-  Container _getTextField() {
-    BorderSide borderSide = const BorderSide(color: Colors.blue, width: 4);
-    InputDecoration inputDecoration = InputDecoration(
-      border: UnderlineInputBorder(borderSide: borderSide),
-      disabledBorder: UnderlineInputBorder(borderSide: borderSide),
-      enabledBorder: UnderlineInputBorder(borderSide: borderSide),
-      focusedBorder: UnderlineInputBorder(borderSide: borderSide),
-    );
 
-    return Container(
-        width: 200,
-        child: TextField(
-          maxLines: null,
-          enableSuggestions: false,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-              color: Colors.yellow, fontSize: 32, fontFamily: "Monospace"),
-          decoration: inputDecoration,
-          onChanged: (val) {
-            setState(() {
-              text = val;
-            });
-          },
-          //controller: _controller,
-        ));
-  }
 }

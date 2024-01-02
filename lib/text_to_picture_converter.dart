@@ -7,6 +7,7 @@ class TextToPictureConverter {
     required double canvasSize,
     required bool border,
     required Color color,
+    required TextStyle textStyleInput,
   }) {
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(
@@ -16,7 +17,6 @@ class TextToPictureConverter {
         Offset(canvasSize, canvasSize),
       ),
     );
-
 
     if (border) {
       final stroke = Paint()
@@ -29,8 +29,8 @@ class TextToPictureConverter {
     final textStyle = TextStyle(
       fontFamily: "Monospace",
       color: color,
-      fontSize: 24,
-    );
+      fontSize: 100,
+    ).merge(textStyleInput);
 
     final textSpan = TextSpan(style: textStyle, text: text);
     final textPainter = TextPainter(

@@ -9,12 +9,14 @@ class ToPixelsConverter {
     required this.string,
     required this.canvasSize,
     required this.textColor,
+    required this.textStyle,
     this.border = false,
   }) : canvas = null;
 
   ToPixelsConverter.fromCanvas({
     required this.canvas,
     required this.canvasSize,
+    required this.textStyle,
   })  : string = null,
         border = false,
         textColor = Colors.black;
@@ -24,6 +26,7 @@ class ToPixelsConverter {
   bool border;
   Color textColor;
   final double canvasSize;
+  TextStyle textStyle;
 
   Future<ToPixelsConversionResult> convert() async {
     if (string == null && canvas == null) {
@@ -37,7 +40,7 @@ class ToPixelsConverter {
             canvasSize: canvasSize,
             border: border,
             color: textColor,
-          )
+            textStyleInput: textStyle,)
         : throw Exception('Canvas conversion not supported yet');
 
     final ByteData imageBytes = await _pictureToBytes(picture);
