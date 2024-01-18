@@ -1,11 +1,7 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'display_painter.dart';
 import 'to_pixels_converter.dart';
-
-const canvasSize = 200.0;
 
 enum ShapeType {
   rectangle,
@@ -43,41 +39,82 @@ class DisplaySimulator extends StatefulWidget {
 class _DisplaySimulatorState extends State<DisplaySimulator> {
   ByteData? imageBytes;
   List<List<Color>>? pixels;
+  late TextPainter textPainter;
+  late Size size;
+  late TextStyle textStyle;
+
+  @override
+  void initState() {
+    textStyle =
+        widget.textStyle.copyWith(fontSize: widget.textStyle.fontSize! / 4);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+    ]);
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    textPainter = TextPainter(
+      text: TextSpan(text: widget.text, style: textStyle),
+      textDirection: TextDirection.ltr,
+      textScaleFactor: 1,
+    )..layout(minWidth: 0, maxWidth: double.infinity);
+    size = textPainter.size;
     _obtainPixelsFromText(widget.text);
 
     return _getDisplay();
   }
-
 
   Widget _getDisplay() {
     if (pixels == null) {
       return Container();
     }
 
-    return CustomPaint(
-        size: Size.infinite,
-        painter: DisplayPainter(
-            pixels: pixels!,
-            backgroundColor: widget.backgroundColor,
-            type: widget.shapeType,
-            gradient: [Colors.white, Colors.red]));
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          Container(
+            height: 30,
+            width: 30,
+            color: Colors.white,
+          ),
+          CustomPaint(
+            size: Size(pixels!.length.toDouble(), pixels![0].length.toDouble()),
+            painter: DisplayPainter(
+                pixels: pixels!,
+                sizeInput: size * 2,
+                backgroundColor: widget.backgroundColor,
+                type: widget.shapeType,
+                gradient: [widget.textColor, widget.textColor]),
+          ),
+          Container(
+            height: 30,
+            width: 30,
+            color: Colors.white,
+          )
+        ],
+      ),
+    );
   }
 
   void _obtainPixelsFromText(String text) async {
     ToPixelsConversionResult result = await ToPixelsConverter.fromString(
       string: text,
-      textStyle: widget.textStyle,
+      textStyle: textStyle,
       border: widget.border,
-      canvasSize: canvasSize / widget.scale,
+      canvasSize: size,
       textColor: widget.textColor,
     ).convert();
 
-    setState(() {
-      imageBytes = result.imageBytes;
-      pixels = result.pixels;
-    });
+    if (imageBytes == null || pixels == null) {
+      setState(() {
+        imageBytes = result.imageBytes;
+        pixels = result.pixels;
+      });
+    }
   }
 }

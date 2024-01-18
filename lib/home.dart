@@ -33,25 +33,26 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: Align(
-            alignment: Alignment.topCenter,
+            alignment: Alignment.center,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                DisplaySimulator(
-                  text: "Nguyen Van Dat Vui Vui Thoi",
-                  border: false,
-                  debug: false,
-                  textColor: widget.textColor,
-                  textStyle: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 25,
+                SafeArea(
+                  child: DisplaySimulator(
+                    text: "Nguyen Van Dat Vui Vui",
+                    border: false,
+                    debug: false,
+                    textColor: widget.textColor,
+                    textStyle: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 100,
+                    ),
+                    backgroundColor: Colors.yellow,
+                    shapeType: ShapeType.star,
                   ),
-                  backgroundColor: widget.backgroundColor,
-                  shapeType: widget.shapeType,
                 ),
                 const SizedBox(height: 48),
               ],
             )));
   }
-
-
 }

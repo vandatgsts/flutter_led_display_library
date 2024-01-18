@@ -7,6 +7,7 @@ class DisplayPainter extends CustomPainter {
     required this.pixels,
     required this.backgroundColor,
     this.gradient,
+    required this.sizeInput,
     required this.type,
   });
 
@@ -14,20 +15,21 @@ class DisplayPainter extends CustomPainter {
   Color backgroundColor;
   List<Color>? gradient;
   ShapeType type;
+  Size sizeInput;
 
   @override
   void paint(Canvas canvas, Size size) {
-
     // Paint rectPaint = Paint()..color = backgroundColor;
     Paint shapePaint = Paint();
-
+    // type=ShapeType.heart;
     double baseSpacingFactor = 0.4; // 10% of the shape size
-
     for (int i = 0; i < pixels.length; i++) {
       for (int j = 0; j < pixels[i].length; j++) {
         // ... [Existing color and opacity checks]
-
-        var cellSize =
+        if (pixels[i][j].opacity < 0.4) {
+          continue;
+        }
+        var cellSize = 4.0 *
             min(size.width / pixels.length, size.height / pixels[i].length);
         var spacing = cellSize * baseSpacingFactor;
         var shapeSize =
@@ -39,7 +41,6 @@ class DisplayPainter extends CustomPainter {
         );
 
         shapePaint.color = pixels[i][j];
-        shapePaint.strokeWidth=2;
         // Now draw the shapes with adjusted sizes and spacing
         switch (type) {
           case ShapeType.rectangle: // Square

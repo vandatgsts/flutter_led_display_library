@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_led_display/text_to_picture_converter.dart';
 import 'package:image/image.dart' as imagePackage;
 
+int scale=1;
 class ToPixelsConverter {
   ToPixelsConverter.fromString({
     required this.string,
@@ -25,7 +26,7 @@ class ToPixelsConverter {
   Canvas? canvas; // Marked as nullable
   bool border;
   Color textColor;
-  final double canvasSize;
+  final Size canvasSize;
   TextStyle textStyle;
 
   Future<ToPixelsConversionResult> convert() async {
@@ -36,11 +37,11 @@ class ToPixelsConverter {
     // Ensure the text to picture converter is appropriately handling null values
     final ui.Picture picture = (string != null)
         ? TextToPictureConverter.convert(
-            text: string!,
-            canvasSize: canvasSize,
-            border: border,
-            color: textColor,
-            textStyleInput: textStyle,)
+      text: string!,
+      canvasSize: canvasSize,
+      border: border,
+      color: textColor,
+      textStyleInput: textStyle,)
         : throw Exception('Canvas conversion not supported yet');
 
     final ByteData imageBytes = await _pictureToBytes(picture);
@@ -54,7 +55,7 @@ class ToPixelsConverter {
 
   Future<ByteData> _pictureToBytes(ui.Picture picture) async {
     final ui.Image img =
-        await picture.toImage(canvasSize.toInt(), canvasSize.toInt());
+    await picture.toImage(canvasSize.width.toInt(), canvasSize.height.toInt());
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
     if (data == null) throw Exception("Failed to convert image to bytes");
     return data;
@@ -62,18 +63,17 @@ class ToPixelsConverter {
 
   List<List<Color>> _bytesToPixelArray(ByteData imageBytes) {
     imagePackage.Image? decodedImage =
-        imagePackage.decodeImage(imageBytes.buffer.asUint8List());
+    imagePackage.decodeImage(imageBytes.buffer.asUint8List());
     if (decodedImage == null) {
       throw Exception('Failed to decode image');
     }
 
     List<List<Color>> pixelArray = List.generate(
-      canvasSize.toInt(),
-      (_) => List.filled(canvasSize.toInt(), Colors.transparent),
+      canvasSize.width.toInt()*4,
+          (_) => List.filled(canvasSize.height.toInt()*4, Colors.transparent),
     );
-
-    for (int i = 0; i < canvasSize.toInt(); i++) {
-      for (int j = 0; j < canvasSize.toInt(); j++) {
+    for (int i = 0; i < canvasSize.width.toInt(); i++) {
+      for (int j = 0; j < canvasSize.height.toInt(); j++) {
         int pixel = decodedImage.getPixelSafe(i, j);
         int hex = _convertColorSpace(pixel);
         pixelArray[i][j] = Color(hex);

@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         body: Home(
           text: "A",
           textColor: Colors.red,
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.yellow,
           scale: 1,
           shapeType: ShapeType.rectangle,
         ),
